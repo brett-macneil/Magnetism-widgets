@@ -110,3 +110,10 @@ def get_mag(Tc, numpoints, lam, J, kilo=True):
         M = M / 1e3
 
     return (Tvec, M)
+
+
+### Solution plot
+###______________________________________________________________
+
+Temp, Mag = get_mag(Tc, numpoints, lam_init, J_init)
+magplot, = ax.plot(Temp, Mag)
