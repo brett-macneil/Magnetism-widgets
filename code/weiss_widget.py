@@ -91,4 +91,22 @@ def brillouin(y, J):
     B[~m] = ((2*J+1)**2/J**2/12-1/J**2/12)*y[~m]
     
     return B
+
+
+def equation(M, lam, T, J):
+    return N*g*muB*J*brillouin(g*mu0*muB*J*lam*M/(kB*T), J ) - M
+
+
+def get_mag(Tc, numpoints, lam, J, kilo=True):
+    Tvec = np.linspace(0, np.ceil(Tc*1.1), numpoints)
+    M = np.empty(Tvec.shape)
+    guess = N*g*muB*J # Initial guess
     
+    for i in range(numpoints):
+        M[i] = fsolve(equation, x0=guess, args=(lam, Tvec[i], J))
+        guess = M[i] # Update guess
+
+    if kilo == True:
+        M = M / 1e3
+
+    return (Tvec, M)
