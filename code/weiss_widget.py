@@ -117,3 +117,31 @@ def get_mag(Tc, numpoints, lam, J, kilo=True):
 
 Temp, Mag = get_mag(Tc, numpoints, lam_init, J_init)
 magplot, = ax.plot(Temp, Mag)
+
+
+### Updates
+###______________________________________________________________
+
+def update(val):
+    lam_new = lam_sl.val
+    J_new = J_sl.val
+    
+    Tc_new = lam_new * mu0 * N * g**2 * J_new * (J_new+1) * muB**2 / (3*kB)
+    
+    Temp_new, Mag_new = get_mag(Tc_new, numpoints, lam_new, J_new)
+    magplot.set_data([Temp_new, Mag_new])
+
+    fig.canvas.draw_idle()
+    
+    return None 
+
+def redraw(event):
+    ax.relim()
+    ax.autoscale_view()
+    return None
+
+
+lam_sl.on_changed(update)
+J_sl.on_changed(update)
+
+fig.show()
