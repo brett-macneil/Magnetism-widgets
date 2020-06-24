@@ -80,5 +80,15 @@ def coth(x):
 
 
 def brillouin(y, J):
-    return(2*J+1)/(2*J)*coth((2*J+1)*y/(2*J)) - coth(y/(2*J))/(2*J)
+    eps = 1e-3 # should be small
+    y = np.array(y); B = np.empty(y.shape)
+    m = np.abs(y)>=eps # mask for selecting elements 
+    
+    B[m] = (2*J+1)/(2*J)*coth((2*J+1)*y[m]/(2*J)) - coth(y[m]/(2*J))/(2*J)
+    
+    # First order approximation for small |y|<eps
+    # Approximation avoids divergence at origin
+    B[~m] = ((2*J+1)**2/J**2/12-1/J**2/12)*y[~m]
+    
+    return B
     
