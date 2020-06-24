@@ -6,3 +6,46 @@ Last updated Wed Jun 24 2020
 
 @author: Brett MacNeil
 """
+
+import numpy as np
+import matplotlib.pyplot as plt 
+from matplotlib.widgets import Slider, Button
+from scipy.optimize import fsolve
+from scipy.constants import physical_constants as cst
+
+
+### Set up figure
+###______________________________________________________________
+
+# Generate figure
+fig, ax = plt.subplots(1, 1)
+plt.subplots_adjust(bottom=0.4)
+plt.style.use('dark_background')
+#plt.style.use('lab')
+
+# Label axes
+ax.set_xlabel('Temperature (K)', fontsize=16)
+ax.set_ylabel(r'Magnetization (kA m$^{-1}$)', fontsize=16)
+ax.grid(color='grey', linestyle='dotted', linewidth=1)
+
+
+### Sliders and buttons
+###______________________________________________________________
+
+# Interaction constant
+lam_loc = plt.axes([0.125, 0.2, 0.775, 0.05])
+lam_min = 1
+lam_max = 1000
+lam_init = 500
+lam_sl = Slider(lam_loc, label=r'$\lambda$', valmin=lam_min, valmax=lam_max, \
+                valinit=lam_init)
+lam_sl.label.set_size(16)
+
+# Angular momentum
+J_loc = plt.axes([0.125, 0.1, 0.775, 0.05])
+J_min = 1/2
+J_max = 31/2
+J_init = 1/2
+J_sl = Slider(J_loc, label=r'$J$', valmin=J_min, valmax=J_max, \
+              valinit=J_init, valstep=1)
+J_sl.label.set_size(16)
