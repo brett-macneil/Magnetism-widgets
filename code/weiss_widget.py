@@ -49,3 +49,24 @@ J_init = 1/2
 J_sl = Slider(J_loc, label=r'$J$', valmin=J_min, valmax=J_max, \
               valinit=J_init, valstep=1)
 J_sl.label.set_size(16)
+
+
+### Constants
+###______________________________________________________________
+
+numpoints = 1000                              # Number of points in solver
+
+# Physical constants
+mu0 = cst['vacuum mag. permeability'][0]      # Permeability of free space
+me = cst['electron mass'][0]                  # Electron mass [kg]
+h = cst['Planck constant'][0]                 # Planck constant [J-s]
+hbar = cst['reduced Planck constant'][0]      # Reduced Planck constant
+e = cst['atomic unit of charge'][0]           # Elementary charge [C]
+muB = cst['Bohr magneton'][0]                 # Bohr Magneton
+g = -cst['electron g factor'][0]              # G-factor
+kB = cst['Boltzmann constant'][0]             # Boltzmann constant [J/K]
+
+N = 1e28                                      # Moments per unit volume
+
+Tc = lam_init * mu0 * N * g**2 * J_init * (J_init+1) * muB**2 / (3*kB)
+                                              # Curie temperature
