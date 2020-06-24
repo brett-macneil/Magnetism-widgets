@@ -50,6 +50,11 @@ J_sl = Slider(J_loc, label=r'$J$', valmin=J_min, valmax=J_max, \
               valinit=J_init, valstep=1)
 J_sl.label.set_size(16)
 
+# Redraw button
+rdraw_loc = plt.axes([0.125, 0.9, 0.25, 0.07])
+rdraw_button = Button(rdraw_loc, 'Redraw Axes', color='C4', hovercolor='C3')
+rdraw_button.label.set_size(16)
+
 
 ### Constants
 ###______________________________________________________________
@@ -143,5 +148,6 @@ def redraw(event):
 
 lam_sl.on_changed(update)
 J_sl.on_changed(update)
+rdraw_button.on_clicked(redraw)
 
 fig.show()
