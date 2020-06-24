@@ -70,3 +70,15 @@ N = 1e28                                      # Moments per unit volume
 
 Tc = lam_init * mu0 * N * g**2 * J_init * (J_init+1) * muB**2 / (3*kB)
                                               # Curie temperature
+
+
+### Function definitions
+###______________________________________________________________
+
+def coth(x):
+    return 1/np.tanh(x)
+
+
+def brillouin(y, J):
+    return(2*J+1)/(2*J)*coth((2*J+1)*y/(2*J)) - coth(y/(2*J))/(2*J)
+    
