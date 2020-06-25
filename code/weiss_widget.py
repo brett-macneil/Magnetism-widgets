@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jun 24 2020
-Last updated Wed Jun 24 2020
+Last updated Thu Jun 25 2020
 
 @author: Brett MacNeil
 """
@@ -49,6 +49,12 @@ J_init = 1/2
 J_sl = Slider(J_loc, label=r'$J$', valmin=J_min, valmax=J_max, \
               valinit=J_init, valstep=1)
 J_sl.label.set_size(16)
+
+
+# Redraw button
+rdraw_loc = plt.axes([0.125, 0.9, 0.25, 0.07])
+rdraw_button = Button(rdraw_loc, 'Redraw Axes', color='C4', hovercolor='C3')
+rdraw_button.label.set_size(16)
 
 
 ### Constants
@@ -143,5 +149,6 @@ def redraw(event):
 
 lam_sl.on_changed(update)
 J_sl.on_changed(update)
+rdraw_button.on_clicked(redraw)
 
 fig.show()
