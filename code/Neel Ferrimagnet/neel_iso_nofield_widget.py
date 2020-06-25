@@ -199,3 +199,57 @@ Temp_line, = ax2.plot([T_init,T_init], [Mag_min, Mag_max], color='red')
 
 ax1.legend([r'Sublattice a', 'Sublattice b'], loc=1, fontsize=16)
 ax2.legend([r'Sublattice a', 'Sublattice b', 'Total'], loc=1, fontsize=16)
+
+
+### Updates
+###______________________________________________________________
+
+def update(val):
+    # Pull val from sliders
+    lam_ab_new = lam_ab_sl.val
+    T_new = T_sl.val
+    
+    # Update axis 1
+    Ma_surf_new = mag_eq_a(Mb_grid, lam_ab_new, T_new)
+    Mb_surf_new = mag_eq_b(Ma_grid, lam_ab_new, T_new)
+    Ma_x_new, Ma_y_new = get_intersect(Ma_grid, Ma_surf_new, Ma_grid, Mb_grid)
+    Mb_x_new, Mb_y_new = get_intersect(Mb_grid, Mb_surf_new, Ma_grid, Mb_grid)
+    Ma_x_new /= 1e3
+    Mb_x_new /= 1e3
+    Ma_y_new /= 1e3
+    Mb_y_new /= 1e3
+    
+    Ma_plot1.set_xdata(Ma_x_new)
+    Ma_plot1.set_ydata(Ma_y_new)
+    Mb_plot1.set_xdata(Mb_x_new)
+    Mb_plot1.set_ydata(Mb_y_new)
+    
+    # Update axis 2
+    _, Mag_a_new, Mag_b_new = get_mag(T_min, T_max, numpoints, lam_ab_new)
+    Mag_a_new /= 1e3
+    Mag_b_new /= 1e3
+    Mag_min_new = min( min(Mag_a_new), min(Mag_b_new) )
+    Mag_max_new = max( max(Mag_a_new), max(Mag_b_new) )
+    
+    Ma_plot2.set_ydata(Mag_a_new)
+    Mb_plot2.set_ydata(Mag_b_new)
+    Mtot_plot2.set_ydata((Mag_a_new+Mag_b_new))
+    Temp_line.set_xdata([T_new,T_new])
+    Temp_line.set_ydata([Mag_min_new, Mag_max_new])
+    
+    fig.canvas.draw_idle()
+    
+    return None
+    
+
+def reset(event):
+    lam_ab_sl.reset()
+    T_sl.reset()
+    return None
+
+lam_ab_sl.on_changed(update)
+T_sl.on_changed(update)
+rst_button.on_clicked(reset)
+
+
+fig.show()
