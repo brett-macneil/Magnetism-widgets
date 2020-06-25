@@ -113,3 +113,31 @@ def get_mag(T_min, T_max, numpoints, lam_ab):
         guess = [mb, ma]       # Update guess to last solution
         
     return (Tvec, Ma, Mb)
+
+
+    ### Sliders and buttons
+###______________________________________________________________
+
+# Coupling constants
+lam_ab_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
+lam_ab_init = 500.
+lam_ab_max = 1000.
+lam_ab_min = 0.
+lam_ab_sl = Slider(lam_ab_loc, label=r'$\lambda_{ab}$', valmin=lam_ab_min, \
+                   valmax=lam_ab_max, valinit=lam_ab_init)
+lam_ab_sl.label.set_size(16)
+
+# Temperature
+T_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
+T_init = 300.
+T_max = 600.
+T_min = 1.
+T_sl = Slider(T_loc, label=r'$T$ (K)', valmin=T_min, valmax=T_max, \
+              valinit=T_init)
+T_sl.label.set_size(16)
+
+# Reset button
+rst_loc = plt.axes([0.125, 0.9, 0.15, 0.07])
+rst_button = Button(rst_loc, 'Reset Sliders', color='C4', hovercolor='C3')
+rst_button.label.set_size(16)
+
