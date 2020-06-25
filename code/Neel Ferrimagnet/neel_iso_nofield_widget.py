@@ -82,3 +82,34 @@ def brillouin(y, J):
     B[~m] = ((2*J+1)**2/J**2/12-1/J**2/12)*y[~m]
     
     return B
+
+
+    def mag_eq_a(Mb, lam_ab, T):
+    arg = -mu0 * mua_max * lam_ab * Mb / (kB*T)
+    return Ma_max * brillouin(arg, Ja)
+
+
+def mag_eq_b(Ma, lam_ab, T):
+    arg = -mu0 * mua_max * lam_ab * Ma / (kB*T)
+    return Mb_max * brillouin(arg, Jb)
+
+
+def equations(mags, lam_ab, T):
+    Ma, Mb = mags
+    eq1 = mag_eq_a(Mb, lam_ab, T) - Ma
+    eq2 = mag_eq_b(Ma, lam_ab, T) - Mb
+    return (eq1, eq2)
+
+
+def get_mag(T_min, T_max, numpoints, lam_ab):
+    Tvec = np.linspace(T_min, T_max, numpoints)
+    Ma = np.empty(numpoints)
+    Mb = np.empty(numpoints)
+    guess = [-Mb_max, Ma_max] # Initial guess
+    
+    for i in range(numpoints):
+        mb, ma = fsolve(equations, x0=guess, args=(lam_ab, Tvec[i]))
+        Ma[i] = ma; Mb[i] = mb # Update solution
+        guess = [mb, ma]       # Update guess to last solution
+        
+    return (Tvec, Ma, Mb)
