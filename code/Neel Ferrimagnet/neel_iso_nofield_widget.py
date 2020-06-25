@@ -141,3 +141,45 @@ rst_loc = plt.axes([0.125, 0.9, 0.15, 0.07])
 rst_button = Button(rst_loc, 'Reset Sliders', color='C4', hovercolor='C3')
 rst_button.label.set_size(16)
 
+
+### Plots
+### Magnetization is divided by 1000 to match plotting units of kA/m
+###______________________________________________________________
+
+# Self-consistent subplot (Left, axis 1)
+Ma_scale = np.linspace(-Ma_max, Ma_max, numpoints)
+Mb_scale = np.linspace(-Mb_max, Mb_max, numpoints)
+
+Ma_grid, Mb_grid = np.meshgrid(Ma_scale, Mb_scale)
+
+# Brillouin function surface
+Ma_surf = mag_eq_a(Mb_grid, lam_ab_init, T_init)
+Mb_surf = mag_eq_b(Ma_grid, lam_ab_init, T_init)
+
+# Self-consistent solutions
+# Intersect of Brillouin surfaces and Ma or Mb plane
+Ma_x, Ma_y = get_intersect(Ma_grid, Ma_surf, Ma_grid, Mb_grid)
+Mb_x, Mb_y = get_intersect(Mb_grid, Mb_surf, Ma_grid, Mb_grid)
+Ma_x /= 1e3
+Mb_x /= 1e3
+Ma_y /= 1e3
+Mb_y /= 1e3
+
+Ma_plot1, = ax1.plot(Ma_x, Ma_y, color='cyan')
+Mb_plot1, = ax1.plot(Mb_x, Mb_y, color='orange')
+
+# Magnetization-temperature subplot (Right, axis 2)
+Temp_vec, Mag_a, Mag_b = get_mag(T_min, T_max, numpoints, lam_ab_init)
+Mag_a /= 1e3
+Mag_b /= 1e3
+
+Ma_plot2, = ax2.plot(Temp_vec, Mag_a, color='cyan')
+Mb_plot2, = ax2.plot(Temp_vec, Mag_b, color='orange')
+Mtot_plot2, = ax2.plot(Temp_vec, (Mag_a+Mag_b), color='white', linewidth=3)
+Mag_min = min( min(Mag_a), min(Mag_b) )
+Mag_max = max( max(Mag_a), max(Mag_b) )
+
+Temp_line, = ax2.plot([T_init,T_init], [Mag_min, Mag_max], color='red')
+
+ax1.legend([r'Sublattice a', 'Sublattice b'], loc=1, fontsize=16)
+ax2.legend([r'Sublattice a', 'Sublattice b', 'Total'], loc=1, fontsize=16)
