@@ -119,7 +119,6 @@ def equations(mags, lam, T):
 
 
 def get_mag(T_min, T_max, numpoints, lam):
-    #t_start = time.time()
     
     Tvec = np.linspace(T_min, T_max, numpoints)
     Ma = np.empty(numpoints)
