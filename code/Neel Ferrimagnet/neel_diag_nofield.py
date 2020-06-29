@@ -112,9 +112,9 @@ def mag_eq_b(Ma, Mb, lam_bb, lam_ab, T):
 
 def equations(mags, lam, T):
     Ma, Mb = mags
-    lambda_aa, lambda_bb, lambda_ab, = lam
-    eq1 = mag_eq_a(Ma, Mb, lambda_aa, lambda_ab, T) - Ma
-    eq2 = mag_eq_b(Ma, Mb, lambda_bb, lambda_ab, T) - Mb
+    lam_aa, lam_bb, lam_ab, = lam
+    eq1 = mag_eq_a(Ma, Mb, lam_aa, lam_ab, T) - Ma
+    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ab, T) - Mb
     return (eq1, eq2)
 
 
