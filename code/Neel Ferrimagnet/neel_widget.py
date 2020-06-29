@@ -100,25 +100,25 @@ def get_intersect(z1, z2, x, y):
     return (x, y)
 
 
-def mag_eq_a(Ma, Mb, lam_aa, lam_ab, T):
-    arg = mu0 * mua_max * (- lam_aa * Ma - lam_ab * Mb) / (kB*T)
+def mag_eq_a(Ma, Mb, lam_aa, lam_ab, T, H):
+    arg = mu0 * mua_max * (H - lam_aa * Ma - lam_ab * Mb) / (kB*T)
     return Ma_max * brillouin(arg, Ja)
 
 
-def mag_eq_b(Ma, Mb, lam_bb, lam_ab, T):
-    arg = mu0 * mua_max * (- lam_ab * Ma - lam_bb * Mb) / (kB*T)
+def mag_eq_b(Ma, Mb, lam_bb, lam_ba, T, H):
+    arg = mu0 * mua_max * (H - lam_ba * Ma - lam_bb * Mb) / (kB*T)
     return Mb_max * brillouin(arg, Jb)
 
 
-def equations(mags, lam, T):
+def equations(mags, lam, T, H):
     Ma, Mb = mags
-    lam_aa, lam_bb, lam_ab, = lam
-    eq1 = mag_eq_a(Ma, Mb, lam_aa, lam_ab, T) - Ma
-    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ab, T) - Mb
+    lam_aa, lam_bb, lam_ab, lam_ba = lam
+    eq1 = mag_eq_a(Ma, Mb, lam_aa, lam_ab, T, H) - Ma
+    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ba, T, H) - Mb
     return (eq1, eq2)
 
 
-def get_mag(T_min, T_max, numpoints, lam):
+def get_mag(T_min, T_max, numpoints, lam, H):
     
     Tvec = np.linspace(T_min, T_max, numpoints)
     Ma = np.empty(numpoints)
@@ -126,7 +126,7 @@ def get_mag(T_min, T_max, numpoints, lam):
     guess = [-Ma_max, Mb_max] # Initial guess
     
     for i in range(numpoints):
-        ma, mb = fsolve(equations, x0=guess, args=(lam, Tvec[i]))
+        ma, mb = fsolve(equations, x0=guess, args=(lam, Tvec[i], H))
         Ma[i] = ma; Mb[i] = mb
         guess = [ma, mb]
         
@@ -134,6 +134,15 @@ def get_mag(T_min, T_max, numpoints, lam):
 
     ### Sliders and buttons
 ###______________________________________________________________
+
+# External field
+H_loc = plt.axes([0.125, 0.30, 0.775, 0.03])
+H_init = 0/mu0
+H_max = 10.
+H_min = -10.
+H_sl = Slider(H_loc, label=r'$\mu_0 H$ (T)', valmin=H_min, \
+                   valmax=H_max, valinit=H_init)
+H_sl.label.set_size(16)
 
 # Coupling constants
 lam_aa_loc = plt.axes([0.125, 0.25, 0.775, 0.03])
@@ -194,8 +203,8 @@ Mb_scale = np.linspace(-Mb_max, Mb_max, numpoints)
 Ma_grid, Mb_grid = np.meshgrid(Ma_scale, Mb_scale)
 
 # Brillouin function surface
-Ma_surf = mag_eq_a(Ma_grid, Mb_grid, lam_aa_init, lam_ab_init, T_init)
-Mb_surf = mag_eq_b(Ma_grid, Mb_grid, lam_bb_init, lam_ba_init, T_init)
+Ma_surf = mag_eq_a(Ma_grid, Mb_grid, lam_aa_init, lam_ab_init, T_init, H_init)
+Mb_surf = mag_eq_b(Ma_grid, Mb_grid, lam_bb_init, lam_ba_init, T_init, H_init)
 
 # Self-consistent solutions
 # Intersect of Brillouin surfaces and Ma or Mb plane
@@ -211,7 +220,7 @@ Mb_plot1, = ax1.plot(Mb_x, Mb_y, color='orange')
 
 # Magnetization-temperature subplot (Right, axis 2)
 lam_init = [lam_aa_init, lam_bb_init, lam_ab_init, lam_ba_init]
-Temp_vec, Mag_a, Mag_b = get_mag(T_min, T_max, numpoints, lam_init)
+Temp_vec, Mag_a, Mag_b = get_mag(T_min, T_max, numpoints, lam_init, H_init)
 Mag_a /= 1e3
 Mag_b /= 1e3
 
@@ -232,6 +241,7 @@ ax2.legend([r'Sublattice a', 'Sublattice b', 'Total'], loc=1, fontsize=16)
 
 def update(val):
     # Pull val from sliders
+    H_new = H_sl.val/mu0
     lam_aa_new = lam_aa_sl.val
     lam_bb_new = lam_bb_sl.val
     lam_ab_new = lam_ab_sl.val
@@ -239,8 +249,10 @@ def update(val):
     T_new = T_sl.val
     
     # Update axis 1
-    Ma_surf_new = mag_eq_a(Ma_grid, Mb_grid, lam_aa_new, lam_ab_new, T_new)
-    Mb_surf_new = mag_eq_b(Ma_grid, Mb_grid, lam_bb_new, lam_ba_new, T_new)
+    Ma_surf_new = mag_eq_a(Ma_grid, Mb_grid, lam_aa_new, lam_ab_new, T_new, \
+                           H_new)
+    Mb_surf_new = mag_eq_b(Ma_grid, Mb_grid, lam_bb_new, lam_ba_new, T_new, \
+                           H_new)
     Ma_x_new, Ma_y_new = get_intersect(Ma_grid, Ma_surf_new, Ma_grid, Mb_grid)
     Mb_x_new, Mb_y_new = get_intersect(Mb_grid, Mb_surf_new, Ma_grid, Mb_grid)
     Ma_x_new /= 1e3
@@ -255,7 +267,7 @@ def update(val):
     
     # Update axis 2
     lam_new = [lam_aa_new, lam_bb_new, lam_ab_new, lam_ba_new]
-    _, Mag_a_new, Mag_b_new = get_mag(T_min, T_max, numpoints, lam_new)
+    _, Mag_a_new, Mag_b_new = get_mag(T_min, T_max, numpoints, lam_new, H_new)
     Mag_a_new /= 1e3
     Mag_b_new /= 1e3
     Mag_min_new = min( min(Mag_a_new), min(Mag_b_new) )
@@ -273,6 +285,7 @@ def update(val):
     
 
 def reset(event):
+    H_sl.reset()
     lam_aa_sl.reset()
     lam_bb_sl.reset()
     lam_ab_sl.reset()
@@ -280,6 +293,7 @@ def reset(event):
     T_sl.reset()
     return None
 
+H_sl.on_changed(update)
 lam_aa_sl.on_changed(update)
 lam_bb_sl.on_changed(update)
 lam_ab_sl.on_changed(update)
