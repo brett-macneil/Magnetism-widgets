@@ -105,21 +105,20 @@ def mag_eq_a(Ma, Mb, lam_aa, lam_ab, T):
     return Ma_max * brillouin(arg, Ja)
 
 
-def mag_eq_b(Ma, Mb, lam_bb, lam_ab, T):
-    arg = mu0 * mua_max * (- lam_ab * Ma - lam_bb * Mb) / (kB*T)
+def mag_eq_b(Ma, Mb, lam_bb, lam_ba, T):
+    arg = mu0 * mua_max * (- lam_ba * Ma - lam_bb * Mb) / (kB*T)
     return Mb_max * brillouin(arg, Jb)
 
 
 def equations(mags, lam, T):
     Ma, Mb = mags
-    lambda_aa, lambda_bb, lambda_ab, = lam
-    eq1 = mag_eq_a(Ma, Mb, lambda_aa, lambda_ab, T) - Ma
-    eq2 = mag_eq_b(Ma, Mb, lambda_bb, lambda_ab, T) - Mb
+    lambda_aa, lam_bb, lam_ab, lam_ba = lam
+    eq1 = mag_eq_a(Ma, Mb, lam_aa, lam_ab, T) - Ma
+    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ba, T) - Mb
     return (eq1, eq2)
 
 
 def get_mag(T_min, T_max, numpoints, lam):
-    #t_start = time.time()
     
     Tvec = np.linspace(T_min, T_max, numpoints)
     Ma = np.empty(numpoints)
