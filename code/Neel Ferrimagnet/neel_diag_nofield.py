@@ -136,7 +136,7 @@ def get_mag(T_min, T_max, numpoints, lam):
 ###______________________________________________________________
 
 # Coupling constants
-lam_aa_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
+lam_aa_loc = plt.axes([0.125, 0.25, 0.775, 0.03])
 lam_aa_init = 0.
 lam_aa_max = 1000.
 lam_aa_min = 0.
@@ -144,7 +144,7 @@ lam_aa_sl = Slider(lam_aa_loc, label=r'$\lambda_{aa}$', valmin=lam_aa_min, \
                    valmax=lam_aa_max, valinit=lam_aa_init)
 lam_aa_sl.label.set_size(16)
 
-lam_bb_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
+lam_bb_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
 lam_bb_init = 0.
 lam_bb_max = 1000.
 lam_bb_min = 0.
@@ -152,13 +152,21 @@ lam_bb_sl = Slider(lam_bb_loc, label=r'$\lambda_{bb}$', valmin=lam_bb_min, \
                    valmax=lam_bb_max, valinit=lam_bb_init)
 lam_bb_sl.label.set_size(16)
 
-lam_ab_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
+lam_ab_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
 lam_ab_init = 500.
 lam_ab_max = 1000.
 lam_ab_min = 0.
 lam_ab_sl = Slider(lam_ab_loc, label=r'$\lambda_{ab}$', valmin=lam_ab_min, \
                    valmax=lam_ab_max, valinit=lam_ab_init)
 lam_ab_sl.label.set_size(16)
+
+lam_ba_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
+lam_ba_init = 500.
+lam_ba_max = 1000.
+lam_ba_min = 0.
+lam_ba_sl = Slider(lam_ba_loc, label=r'$\lambda_{ba}$', valmin=lam_ba_min, \
+                   valmax=lam_ba_max, valinit=lam_ba_init)
+lam_ba_sl.label.set_size(16)
 
 # Temperature
 T_loc = plt.axes([0.125, 0.05, 0.775, 0.03])
@@ -187,7 +195,7 @@ Ma_grid, Mb_grid = np.meshgrid(Ma_scale, Mb_scale)
 
 # Brillouin function surface
 Ma_surf = mag_eq_a(Ma_grid, Mb_grid, lam_aa_init, lam_ab_init, T_init)
-Mb_surf = mag_eq_b(Ma_grid, Mb_grid, lam_bb_init, lam_ab_init, T_init)
+Mb_surf = mag_eq_b(Ma_grid, Mb_grid, lam_bb_init, lam_ba_init, T_init)
 
 # Self-consistent solutions
 # Intersect of Brillouin surfaces and Ma or Mb plane
@@ -202,7 +210,7 @@ Ma_plot1, = ax1.plot(Ma_x, Ma_y, color='cyan')
 Mb_plot1, = ax1.plot(Mb_x, Mb_y, color='orange')
 
 # Magnetization-temperature subplot (Right, axis 2)
-lam_init = [lam_aa_init, lam_bb_init, lam_ab_init]
+lam_init = [lam_aa_init, lam_bb_init, lam_ab_init, lam_ba_init]
 Temp_vec, Mag_a, Mag_b = get_mag(T_min, T_max, numpoints, lam_init)
 Mag_a /= 1e3
 Mag_b /= 1e3
@@ -227,11 +235,12 @@ def update(val):
     lam_aa_new = lam_aa_sl.val
     lam_bb_new = lam_bb_sl.val
     lam_ab_new = lam_ab_sl.val
+    lam_ba_new = lam_ba_sl.val
     T_new = T_sl.val
     
     # Update axis 1
     Ma_surf_new = mag_eq_a(Ma_grid, Mb_grid, lam_aa_new, lam_ab_new, T_new)
-    Mb_surf_new = mag_eq_b(Ma_grid, Mb_grid, lam_bb_new, lam_ab_new, T_new)
+    Mb_surf_new = mag_eq_b(Ma_grid, Mb_grid, lam_bb_new, lam_ba_new, T_new)
     Ma_x_new, Ma_y_new = get_intersect(Ma_grid, Ma_surf_new, Ma_grid, Mb_grid)
     Mb_x_new, Mb_y_new = get_intersect(Mb_grid, Mb_surf_new, Ma_grid, Mb_grid)
     Ma_x_new /= 1e3
@@ -245,7 +254,7 @@ def update(val):
     Mb_plot1.set_ydata(Mb_y_new)
     
     # Update axis 2
-    lam_new = [lam_aa_new, lam_bb_new, lam_ab_new]
+    lam_new = [lam_aa_new, lam_bb_new, lam_ab_new, lam_ba_new]
     _, Mag_a_new, Mag_b_new = get_mag(T_min, T_max, numpoints, lam_new)
     Mag_a_new /= 1e3
     Mag_b_new /= 1e3
@@ -267,12 +276,14 @@ def reset(event):
     lam_aa_sl.reset()
     lam_bb_sl.reset()
     lam_ab_sl.reset()
+    lam_ba_sl.reset()
     T_sl.reset()
     return None
 
 lam_aa_sl.on_changed(update)
 lam_bb_sl.on_changed(update)
 lam_ab_sl.on_changed(update)
+lam_ba_sl.on_changed(update)
 T_sl.on_changed(update)
 rst_button.on_clicked(reset)
 
