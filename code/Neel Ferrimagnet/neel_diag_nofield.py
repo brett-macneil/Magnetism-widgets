@@ -18,6 +18,7 @@ from scipy.constants import physical_constants as cst
 
 # Generate figure
 fig, [ax1, ax2] = plt.subplots(1, 2)
+a = plt.axes([0,0,0,0]) # Dummy axes
 plt.subplots_adjust(bottom=0.4)
 plt.style.use('dark_background')
 #plt.style.use('lab')
@@ -99,23 +100,60 @@ def get_intersect(z1, z2, x, y):
     return (x, y)
 
 
-    def mag_eq_a(Mb, lam_ab, T):
-    arg = -mu0 * mua_max * lam_ab * Mb / (kB*T)
+def mag_eq_a(Ma, Mb, lam_aa, lam_ab, T):
+    arg = mu0 * mua_max * (- lam_aa * Ma - lam_ab * Mb) / (kB*T)
     return Ma_max * brillouin(arg, Ja)
 
 
-'''
+def mag_eq_b(Ma, Mb, lam_bb, lam_ab, T):
+    arg = mu0 * mua_max * (- lam_ab * Ma - lam_bb * Mb) / (kB*T)
+    return Mb_max * brillouin(arg, Jb)
 
-Todo: add relevant equations and solvers
 
-'''
+def equations(mags, lam, T):
+    Ma, Mb = mags
+    lambda_aa, lambda_bb, lambda_ab, = lam
+    eq1 = mag_eq_a(Ma, Mb, lambda_aa, lambda_ab, T) - Ma
+    eq2 = mag_eq_b(Ma, Mb, lambda_bb, lambda_ab, T) - Mb
+    return (eq1, eq2)
 
+
+def get_mag(T_min, T_max, numpoints, lam):
+    #t_start = time.time()
+    
+    Tvec = np.linspace(T_min, T_max, numpoints)
+    Ma = np.empty(numpoints)
+    Mb = np.empty(numpoints)
+    guess = [-Ma_max, Mb_max] # Initial guess
+    
+    for i in range(numpoints):
+        ma, mb = fsolve(equations, x0=guess, args=(lam, Tvec[i]))
+        Ma[i] = ma; Mb[i] = mb
+        guess = [ma, mb]
+        
+    return (Tvec, Ma, Mb)
 
     ### Sliders and buttons
 ###______________________________________________________________
 
 # Coupling constants
-lam_ab_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
+lam_aa_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
+lam_aa_init = 0.
+lam_aa_max = 1000.
+lam_aa_min = 0.
+lam_aa_sl = Slider(lam_aa_loc, label=r'$\lambda_{aa}$', valmin=lam_aa_min, \
+                   valmax=lam_aa_max, valinit=lam_aa_init)
+lam_aa_sl.label.set_size(16)
+
+lam_bb_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
+lam_bb_init = 0.
+lam_bb_max = 1000.
+lam_bb_min = 0.
+lam_bb_sl = Slider(lam_bb_loc, label=r'$\lambda_{bb}$', valmin=lam_bb_min, \
+                   valmax=lam_bb_max, valinit=lam_bb_init)
+lam_bb_sl.label.set_size(16)
+
+lam_ab_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
 lam_ab_init = 500.
 lam_ab_max = 1000.
 lam_ab_min = 0.
@@ -124,19 +162,13 @@ lam_ab_sl = Slider(lam_ab_loc, label=r'$\lambda_{ab}$', valmin=lam_ab_min, \
 lam_ab_sl.label.set_size(16)
 
 # Temperature
-T_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
+T_loc = plt.axes([0.125, 0.05, 0.775, 0.03])
 T_init = 300.
 T_max = 600.
 T_min = 1.
 T_sl = Slider(T_loc, label=r'$T$ (K)', valmin=T_min, valmax=T_max, \
               valinit=T_init)
 T_sl.label.set_size(16)
-
-'''
-
-Todo: add relevant equations and solvers
-
-'''
 
 # Reset button
 rst_loc = plt.axes([0.125, 0.9, 0.15, 0.07])
@@ -155,8 +187,8 @@ Mb_scale = np.linspace(-Mb_max, Mb_max, numpoints)
 Ma_grid, Mb_grid = np.meshgrid(Ma_scale, Mb_scale)
 
 # Brillouin function surface
-Ma_surf = mag_eq_a(Mb_grid, lam_ab_init, T_init)
-Mb_surf = mag_eq_b(Ma_grid, lam_ab_init, T_init)
+Ma_surf = mag_eq_a(Ma_grid, Mb_grid, lam_aa_init, lam_ab_init, T_init)
+Mb_surf = mag_eq_b(Ma_grid, Mb_grid, lam_bb_init, lam_ab_init, T_init)
 
 # Self-consistent solutions
 # Intersect of Brillouin surfaces and Ma or Mb plane
@@ -171,7 +203,8 @@ Ma_plot1, = ax1.plot(Ma_x, Ma_y, color='cyan')
 Mb_plot1, = ax1.plot(Mb_x, Mb_y, color='orange')
 
 # Magnetization-temperature subplot (Right, axis 2)
-Temp_vec, Mag_a, Mag_b = get_mag(T_min, T_max, numpoints, lam_ab_init)
+lam_init = [lam_aa_init, lam_bb_init, lam_ab_init]
+Temp_vec, Mag_a, Mag_b = get_mag(T_min, T_max, numpoints, lam_init)
 Mag_a /= 1e3
 Mag_b /= 1e3
 
@@ -192,12 +225,14 @@ ax2.legend([r'Sublattice a', 'Sublattice b', 'Total'], loc=1, fontsize=16)
 
 def update(val):
     # Pull val from sliders
+    lam_aa_new = lam_aa_sl.val
+    lam_bb_new = lam_bb_sl.val
     lam_ab_new = lam_ab_sl.val
     T_new = T_sl.val
     
     # Update axis 1
-    Ma_surf_new = mag_eq_a(Mb_grid, lam_ab_new, T_new)
-    Mb_surf_new = mag_eq_b(Ma_grid, lam_ab_new, T_new)
+    Ma_surf_new = mag_eq_a(Ma_grid, Mb_grid, lam_aa_new, lam_ab_new, T_new)
+    Mb_surf_new = mag_eq_b(Ma_grid, Mb_grid, lam_bb_new, lam_ab_new, T_new)
     Ma_x_new, Ma_y_new = get_intersect(Ma_grid, Ma_surf_new, Ma_grid, Mb_grid)
     Mb_x_new, Mb_y_new = get_intersect(Mb_grid, Mb_surf_new, Ma_grid, Mb_grid)
     Ma_x_new /= 1e3
@@ -211,7 +246,8 @@ def update(val):
     Mb_plot1.set_ydata(Mb_y_new)
     
     # Update axis 2
-    _, Mag_a_new, Mag_b_new = get_mag(T_min, T_max, numpoints, lam_ab_new)
+    lam_new = [lam_aa_new, lam_bb_new, lam_ab_new]
+    _, Mag_a_new, Mag_b_new = get_mag(T_min, T_max, numpoints, lam_new)
     Mag_a_new /= 1e3
     Mag_b_new /= 1e3
     Mag_min_new = min( min(Mag_a_new), min(Mag_b_new) )
@@ -229,13 +265,16 @@ def update(val):
     
 
 def reset(event):
+    lam_aa_sl.reset()
+    lam_bb_sl.reset()
     lam_ab_sl.reset()
     T_sl.reset()
     return None
 
+lam_aa_sl.on_changed(update)
+lam_bb_sl.on_changed(update)
 lam_ab_sl.on_changed(update)
 T_sl.on_changed(update)
 rst_button.on_clicked(reset)
-
 
 fig.show()
