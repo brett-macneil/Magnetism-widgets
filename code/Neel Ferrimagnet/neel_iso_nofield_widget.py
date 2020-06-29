@@ -19,7 +19,7 @@ from scipy.constants import physical_constants as cst
 
 # Generate figure
 fig, [ax1, ax2] = plt.subplots(1, 2)
-a = plt.axes([0,0])
+a = plt.axes([0,0,0,0])
 plt.subplots_adjust(bottom=0.4)
 plt.style.use('dark_background')
 #plt.style.use('lab')
