@@ -18,6 +18,10 @@ from scipy.constants import physical_constants as cst
 
 numpoints = 500           # Number of points used in equation solver
 
+T_max = 600
+T_min = 1
+T_vec = np.linspace(T_min, T_max, numpoints)
+
 # Physical constants
 mu0 = cst['vacuum mag. permeability'][0]      # Permeability of free space
 me = cst['electron mass'][0]                  # Electron mass [kg]
@@ -81,18 +85,19 @@ def equations(mags, lam, T):
     return (eq1, eq2)
 
 
-def get_mag(T_min, T_max, numpoints, lam):
-    
-    Tvec = np.linspace(T_min, T_max, numpoints)
+def get_mag(T, lam_aa, lam_bb, lam_ab, lam_ba):
+    lam = [lam_aa, lam_bb, lam_ab, lam_ba]
     Ma = np.empty(numpoints)
     Mb = np.empty(numpoints)
     guess = [-Ma_max, Mb_max] # Initial guess
     
     for i in range(numpoints):
-        ma, mb = fsolve(equations, x0=guess, args=(lam, Tvec[i]))
+        ma, mb = fsolve(equations, x0=guess, args=(lam, T_vec[i]))
         Ma[i] = ma; Mb[i] = mb
         guess = [ma, mb]
         
-    return (Tvec, Ma, Mb)
+    return Ma+Mb
 
-    
+plt.plot(T_vec, get_mag(T_vec, 0, 0, 500, 500))
+
+data = np.transpose( np.array([T_vec, get_mag(T_vec, 0, 0, 500, 500)]) )
