@@ -61,3 +61,21 @@ def brillouin(y, J):
     B[~m] = ((2*J+1)**2/J**2/12-1/J**2/12)*y[~m]
     
     return B
+
+
+def mag_eq_a(Ma, Mb, lam_aa, lam_ab, T):
+    arg = mu0 * mua_max * (- lam_aa * Ma - lam_ab * Mb) / (kB*T)
+    return Ma_max * brillouin(arg, Ja)
+
+
+def mag_eq_b(Ma, Mb, lam_bb, lam_ab, T):
+    arg = mu0 * mua_max * (- lam_ab * Ma - lam_bb * Mb) / (kB*T)
+    return Mb_max * brillouin(arg, Jb)
+
+
+def equations(mags, lam, T):
+    Ma, Mb = mags
+    lam_aa, lam_bb, lam_ab, lam_ba = lam
+    eq1 = mag_eq_a(Ma, Mb, lam_aa, lam_ab, T) - Ma
+    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ab, T) - Mb
+    return (eq1, eq2)
