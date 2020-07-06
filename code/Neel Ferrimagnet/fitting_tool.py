@@ -16,6 +16,8 @@ from scipy.constants import physical_constants as cst
 ### Constants
 ###______________________________________________________________
 
+filename = ''
+
 numpoints = 500           # Number of points used in equation solver
 
 T_max = 600
@@ -99,11 +101,23 @@ def get_mag(T, lam_aa, lam_bb, lam_ab, lam_ba):
     return Ma+Mb
 
 
+### Set up figure
+###______________________________________________________________
+
+fig, ax = plt.subplots(1, 1)
+plt.subplots_adjust(bottom=0.35, left=0.15)
+
+ax.set_xlabel('Temperature (K)', fontsize=16)
+ax.set_ylabel(r'Magnetization (kA m$^{-1}$)', fontsize=16)
+ax.grid(color='grey', linestyle='dotted', linewidth=1)
+
+
+
 ### Sliders and buttons
 ###______________________________________________________________
 
 # Coupling constants
-lam_aa_loc = plt.axes([0.125, 0.25, 0.775, 0.03])
+lam_aa_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
 lam_aa_init = 0.
 lam_aa_max = 1000.
 lam_aa_min = 0.
@@ -111,7 +125,7 @@ lam_aa_sl = Slider(lam_aa_loc, label=r'$\lambda_{aa}$', valmin=lam_aa_min, \
                    valmax=lam_aa_max, valinit=lam_aa_init)
 lam_aa_sl.label.set_size(16)
 
-lam_bb_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
+lam_bb_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
 lam_bb_init = 0.
 lam_bb_max = 1000.
 lam_bb_min = 0.
@@ -119,7 +133,7 @@ lam_bb_sl = Slider(lam_bb_loc, label=r'$\lambda_{bb}$', valmin=lam_bb_min, \
                    valmax=lam_bb_max, valinit=lam_bb_init)
 lam_bb_sl.label.set_size(16)
 
-lam_ab_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
+lam_ab_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
 lam_ab_init = 500.
 lam_ab_max = 1000.
 lam_ab_min = 0.
@@ -127,10 +141,31 @@ lam_ab_sl = Slider(lam_ab_loc, label=r'$\lambda_{ab}$', valmin=lam_ab_min, \
                    valmax=lam_ab_max, valinit=lam_ab_init)
 lam_ab_sl.label.set_size(16)
 
-lam_ba_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
+lam_ba_loc = plt.axes([0.125, 0.05, 0.775, 0.03])
 lam_ba_init = 500.
 lam_ba_max = 1000.
 lam_ba_min = 0.
 lam_ba_sl = Slider(lam_ba_loc, label=r'$\lambda_{ba}$', valmin=lam_ba_min, \
                    valmax=lam_ba_max, valinit=lam_ba_init)
 lam_ba_sl.label.set_size(16)
+
+# Reset button
+rst_loc = plt.axes([0.15, 0.9, 0.25, 0.07])
+rst_button = Button(rst_loc, 'Reset Sliders', color='C4', hovercolor='C3')
+rst_button.label.set_size(16)
+
+# Refine button
+ref_loc = plt.axes([0.6, 0.9, 0.30, 0.07])
+ref_button = Button(ref_loc, 'Refine Solution', color='C4', hovercolor='C3')
+ref_button.label.set_size(16)
+
+
+### Plotting
+###______________________________________________________________
+
+T, M = np.genfromtxt(filename, unpack=True)
+
+ax.plot(T, M/1e3, marker='.', ls='')
+
+ax.plot(T_vec, get_mag(T_vec, lam_aa_init, lam_bb_init, lam_ab_init, \
+                       lam_ba_init)/1e3)
