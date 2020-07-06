@@ -92,12 +92,45 @@ def get_mag(T, lam_aa, lam_bb, lam_ab, lam_ba):
     guess = [-Ma_max, Mb_max] # Initial guess
     
     for i in range(numpoints):
-        ma, mb = fsolve(equations, x0=guess, args=(lam, T_vec[i]))
+        ma, mb = fsolve(equations, x0=guess, args=(lam, T[i]))
         Ma[i] = ma; Mb[i] = mb
         guess = [ma, mb]
         
     return Ma+Mb
 
-plt.plot(T_vec, get_mag(T_vec, 0, 0, 500, 500))
 
-data = np.transpose( np.array([T_vec, get_mag(T_vec, 0, 0, 500, 500)]) )
+### Sliders and buttons
+###______________________________________________________________
+
+# Coupling constants
+lam_aa_loc = plt.axes([0.125, 0.25, 0.775, 0.03])
+lam_aa_init = 0.
+lam_aa_max = 1000.
+lam_aa_min = 0.
+lam_aa_sl = Slider(lam_aa_loc, label=r'$\lambda_{aa}$', valmin=lam_aa_min, \
+                   valmax=lam_aa_max, valinit=lam_aa_init)
+lam_aa_sl.label.set_size(16)
+
+lam_bb_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
+lam_bb_init = 0.
+lam_bb_max = 1000.
+lam_bb_min = 0.
+lam_bb_sl = Slider(lam_bb_loc, label=r'$\lambda_{bb}$', valmin=lam_bb_min, \
+                   valmax=lam_bb_max, valinit=lam_bb_init)
+lam_bb_sl.label.set_size(16)
+
+lam_ab_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
+lam_ab_init = 500.
+lam_ab_max = 1000.
+lam_ab_min = 0.
+lam_ab_sl = Slider(lam_ab_loc, label=r'$\lambda_{ab}$', valmin=lam_ab_min, \
+                   valmax=lam_ab_max, valinit=lam_ab_init)
+lam_ab_sl.label.set_size(16)
+
+lam_ba_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
+lam_ba_init = 500.
+lam_ba_max = 1000.
+lam_ba_min = 0.
+lam_ba_sl = Slider(lam_ba_loc, label=r'$\lambda_{ba}$', valmin=lam_ba_min, \
+                   valmax=lam_ba_max, valinit=lam_ba_init)
+lam_ba_sl.label.set_size(16)
