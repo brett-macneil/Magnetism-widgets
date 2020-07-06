@@ -84,3 +84,18 @@ def brillouin(y, J):
     
     return B
 
+
+def get_intersect(z1, z2, x, y):
+    diff = np.sign(z2-z1) # array with distinct boundary
+                          # this boundary between -1's and 1's
+                          # is the intersection curve of the two 
+                          # surfaces z1 and z2
+                                      
+    c = a.contour(x, y, diff)
+    a.cla() # Clear dummy axes
+    
+    data = c.allsegs[0][0] # intersection contour
+    x = data[:, 0]
+    y = data[:, 1]
+                           # Return (x,y) of intersect curve              
+    return (x, y)
