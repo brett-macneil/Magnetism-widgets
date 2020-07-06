@@ -114,7 +114,7 @@ def equations(mags, lam, T):
     Ma, Mb = mags
     lam_aa, lam_bb, lam_ab, lam_ba = lam
     eq1 = mag_eq_a(Ma, Mb, lam_aa, lam_ab, T) - Ma
-    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ab, T) - Mb
+    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ba, T) - Mb
     return (eq1, eq2)
 
 
