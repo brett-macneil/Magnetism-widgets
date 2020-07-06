@@ -132,7 +132,7 @@ def get_mag(T_min, T_max, numpoints, lam):
         
     return (Tvec, Ma, Mb)
 
-    ### Sliders and buttons
+### Sliders and buttons
 ###______________________________________________________________
 
 # Coupling constants
