@@ -112,7 +112,6 @@ ax.set_ylabel(r'Magnetization (kA m$^{-1}$)', fontsize=16)
 ax.grid(color='grey', linestyle='dotted', linewidth=1)
 
 
-
 ### Sliders and buttons
 ###______________________________________________________________
 
@@ -167,5 +166,23 @@ T, M = np.genfromtxt(filename, unpack=True)
 
 ax.plot(T, M/1e3, marker='.', ls='')
 
-ax.plot(T_vec, get_mag(T_vec, lam_aa_init, lam_bb_init, lam_ab_init, \
-                       lam_ba_init)/1e3)
+magplot, = ax.plot(T_vec, get_mag(T_vec, lam_aa_init, lam_bb_init, \
+                                  lam_ab_init, lam_ba_init)/1e3)
+    
+
+### Updates
+###______________________________________________________________
+
+def update(val):
+    lam_aa_new = lam_aa_sl.val
+    lam_bb_new = lam_bb_sl.val
+    lam_ab_new = lam_ab_sl.val
+    lam_ba_new = lam_ba_sl.val
+
+    magplot.set_ydata(get_mag(T_vec, lam_aa_new, lam_bb_new, lam_ab_new, \
+                              lam_ba_new)/1e3)
+        
+lam_aa_sl.on_changed(update)
+lam_bb_sl.on_changed(update)
+lam_ab_sl.on_changed(update)
+lam_ba_sl.on_changed(update)
