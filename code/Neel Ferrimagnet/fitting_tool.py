@@ -18,7 +18,7 @@ from scipy.constants import physical_constants as cst
 
 filename = ''
 
-numpoints = 500           # Number of points used in equation solver
+numpoints = 70           # Number of points used in equation solver
 
 T_max = 600
 T_min = 1
@@ -83,7 +83,7 @@ def equations(mags, lam, T):
     Ma, Mb = mags
     lam_aa, lam_bb, lam_ab, lam_ba = lam
     eq1 = mag_eq_a(Ma, Mb, lam_aa, lam_ab, T) - Ma
-    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ab, T) - Mb
+    eq2 = mag_eq_b(Ma, Mb, lam_bb, lam_ba, T) - Mb
     return (eq1, eq2)
 
 
@@ -174,15 +174,36 @@ magplot, = ax.plot(T_vec, get_mag(T_vec, lam_aa_init, lam_bb_init, \
 ###______________________________________________________________
 
 def update(val):
-    lam_aa_new = lam_aa_sl.val
-    lam_bb_new = lam_bb_sl.val
-    lam_ab_new = lam_ab_sl.val
-    lam_ba_new = lam_ba_sl.val
+    magplot.set_ydata(get_mag(T_vec, lam_aa_sl.val, lam_bb_sl.val, \
+                              lam_ab_sl.val, lam_ba_sl.val)/1e3)
+    return None
 
-    magplot.set_ydata(get_mag(T_vec, lam_aa_new, lam_bb_new, lam_ab_new, \
-                              lam_ba_new)/1e3)
-        
+
+def reset(event):
+    lam_aa_sl.reset()
+    lam_bb_sl.reset()
+    lam_ab_sl.reset()
+    lam_ba_sl.reset()
+    return None
+
+    
+def refine(event):
+    guess = [lam_aa_sl.val, lam_bb_sl.val, lam_ab_sl.val, lam_ba_sl.val]
+    print('\n Original parameters:', guess, '\n')
+    
+    lam_ref = curve_fit(get_mag, xdata=T, ydata=M, p0=guess)[0]
+    print('\n Refined parameters:', lam_ref, '\n')
+    
+    M_ref = get_mag(T_vec, lam_ref[0], lam_ref[1], lam_ref[2], lam_ref[3])/1e3
+    magplot.set_ydata(M_ref)
+    
+    return None
+
+
 lam_aa_sl.on_changed(update)
 lam_bb_sl.on_changed(update)
 lam_ab_sl.on_changed(update)
 lam_ba_sl.on_changed(update)
+
+rst_button.on_clicked(reset)
+ref_button.on_clicked(refine)
