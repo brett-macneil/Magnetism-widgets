@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jul 6 2020
-Last updated Mon Jul 6 2020
+Last updated Thu Jul 9 2020
 
 @author: Brett MacNeil
 """
@@ -74,8 +74,8 @@ def mag_eq_a(Ma, Mb, lam_aa, lam_ab, T):
     return Ma_max * brillouin(arg, Ja)
 
 
-def mag_eq_b(Ma, Mb, lam_bb, lam_ab, T):
-    arg = mu0 * mua_max * (- lam_ab * Ma - lam_bb * Mb) / (kB*T)
+def mag_eq_b(Ma, Mb, lam_bb, lam_ba, T):
+    arg = mu0 * mua_max * (- lam_ba * Ma - lam_bb * Mb) / (kB*T)
     return Mb_max * brillouin(arg, Jb)
 
 
