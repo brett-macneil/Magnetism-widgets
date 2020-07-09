@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jul 6 2020
-Last updated Mon Jul 6 2020
+Last updated Thu Jul 9 2020
 
 @author: Brett MacNeil
 """
