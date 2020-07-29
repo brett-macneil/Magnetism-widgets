@@ -11,6 +11,7 @@ Last updated Wed Jul 29 2020
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import physical_constants as cst
+from scipy.optimize import fsolve
 
 
 # Load M vs T data to fit
@@ -30,6 +31,9 @@ mu0 = cst['vacuum mag. permeability'][0]  # N/A^2
 muB = cst['Bohr magneton'][0]             # J/T
 g = -cst['electron g factor'][0]          # Unitless
 kB = cst['Boltzmann constant'][0]         # J/K
+
+# Sublattice parameters
+N = 1.341e28                              # Moment volume density 1/m^3 
 
 
 # Function definitions
@@ -52,3 +56,26 @@ def brillouin(y, J, eps=1e-3):
     B[~mask] = ((2*J+1)**2/J**2/12-1/J**2/12)*y[~mask]
     
     return B
+
+
+def mag_eq(M, lam, mu, T, Jeff, N):
+    y = -mu0*mu*lam*M
+    y /= kB*T
+    return N*mu*brillouin(y, Jeff) - M
+
+def get_mag(T, lam, mu, kilo=True):
+    # Effective angular momentum quantum number
+    # mu = g*muB*J
+    Jeff = mu/(g*muB)
+    numpoints = len(T)
+    Mag = np.empty(numpoints)
+    guess = N*mu
+    
+    for i in range(numpoints):
+        Mag[i] = fsolve(mag_eq, x0=guess, args=(lam, mu, T[i], Jeff, N))
+        guess = Mag[i]
+    
+    if kilo:
+        Mag /= 1e3
+        
+    return Mag
