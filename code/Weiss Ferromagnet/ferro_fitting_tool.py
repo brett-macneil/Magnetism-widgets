@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 from scipy.constants import physical_constants as cst
-from scipy.optimize import fsolve
+from scipy.optimize import fsolve, curve_fit
 
 
 # Load M vs T data to fit
@@ -84,9 +84,7 @@ def get_mag(T, lam, mu, kilo=True):
     return Mag
 
 
-def get_tot_mag(T, lam, mu, N1=N, N2=N, kilo=True):
-    lam_1, lam_2 = lam
-    mu_1, mu_2 = mu
+def get_tot_mag(T, lam_1, lam_2 mu_1, mu_2, N1=N, N2=N, kilo=True):
     Jeff_1 = mu_1/(g*muB)
     Jeff_2 = mu_2/(g*muB)
     numpoints = len(T)
@@ -199,6 +197,31 @@ def reset(event):
     mu_2_sl.reset()
     return None
 
+
+def refine(event):
+    guess = [lam_1_sl.val, lam_2_sl.val, mu_1_sl.val*muB, mu_2_sl.val*muB]
+    params_ref = curve_fit(get_tot_mag, xdata=T, ydata=M, p0=guess)[0]
+    
+    M1_ref = get_mag(T, params_ref[0], params_ref[2])
+    M1_plot.set_ydata(M1_ref)
+    
+    M2_ref = -get_mag(T, params_ref[1], params_ref[3])
+    M2_plot.set_ydata(M1_ref)
+    
+    Mtot_ref = M1_ref + M2_ref
+    Mtot_plot.set_ydata(Mtot_ref)
+    
+    lam_1_sl.set_val(params_ref[0])
+    lam_2_sl.set_val(params_ref[1])
+    mu_1_sl.set_val(params_ref[2]/muB)
+    mu_2_sl.set_val(params_ref[3]/muB)
+
+    
+    print('\n','Original parameters','\n',guess,'\n')
+    print('\n','Refined parameters','\n',params_ref,'\n')
+    
+    return None  
+
     
 lam_1_sl.on_changed(update)
 lam_2_sl.on_changed(update)
@@ -206,3 +229,4 @@ mu_1_sl.on_changed(update)
 mu_2_sl.on_changed(update)
 
 rst_button.on_clicked(reset)
+ref_button.on_clicked(refine)
