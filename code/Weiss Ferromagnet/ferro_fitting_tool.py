@@ -129,3 +129,14 @@ rst_button = Button(rst_loc, 'Reset Sliders', color='C4', hovercolor='C3')
 
 ref_loc = plt.axes([0.7, 0.9, 0.20, 0.07])
 ref_button = Button(ref_loc, 'Refine Solution', color='C4', hovercolor='C3')
+
+
+# Plotting
+M1 = get_mag(T, lam_1_init, mu_1_init*muB)
+M2 = -get_mag(T, lam_2_init, mu_2_init*muB)
+Mtot = M1 + M2
+
+data_plot, = ax.plot(T, M, marker='.', linestyle='', color='C0')
+M1_plot, = ax.plot(T, M1, linestyle='dotted', color='C7')
+M2_plot, = ax.plot(T, M2, linestyle='dotted', color='C7')
+Mtot_plot, = ax.plot(T, Mtot, color='C3')
