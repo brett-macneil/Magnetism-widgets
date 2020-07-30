@@ -63,6 +63,7 @@ def mag_eq(M, lam, mu, T, Jeff, N):
     y /= kB*T
     return N*mu*brillouin(y, Jeff) - M
 
+
 def get_mag(T, lam, mu, kilo=True):
     # Effective angular momentum quantum number
     # mu = g*muB*J
@@ -79,3 +80,12 @@ def get_mag(T, lam, mu, kilo=True):
         Mag /= 1e3
         
     return Mag
+
+
+def curie_temp(lam, mu):
+    # 1st order expansion of Brillouin 
+    # function to estimate Curie temperature.
+    Jeff = mu/(g*muB)
+    Tc = lam*mu0*N*Jeff*(Jeff+1)*(g*muB)**2
+    Tc /= 3*kB
+    return Tc
