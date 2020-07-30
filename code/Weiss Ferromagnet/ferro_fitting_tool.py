@@ -61,7 +61,7 @@ def brillouin(y, J, eps=1e-3):
 
 
 def mag_eq(M, lam, mu, T, Jeff, N):
-    y = -mu0*mu*lam*M
+    y = mu0*mu*lam*M
     y /= kB*T
     return N*mu*brillouin(y, Jeff) - M
 
