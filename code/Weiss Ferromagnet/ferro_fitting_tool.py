@@ -10,7 +10,7 @@ Last updated Wed Jul 29 2020
 # Imports
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider
+from matplotlib.widgets import Slider, Button
 from scipy.constants import physical_constants as cst
 from scipy.optimize import fsolve
 
@@ -93,7 +93,7 @@ def curie_temp(lam, mu):
     return Tc
 
 
-# Sliders
+# Sliders and buttons
 lam_1_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
 lam_1_init = 750.
 lam_1_max = 1000.
@@ -123,3 +123,9 @@ mu_2_max = 5.
 mu_2_min = -5.
 mu_2_sl = Slider(ax=mu_2_loc, label=r'$\mu_2$ $(\mu_B)$', valmin=mu_2_min, 
                   valmax=mu_2_max, valinit=mu_2_init)
+
+rst_loc = plt.axes([0.125, 0.9, 0.20, 0.07])
+rst_button = Button(rst_loc, 'Reset Sliders', color='C4', hovercolor='C3')
+
+ref_loc = plt.axes([0.7, 0.9, 0.20, 0.07])
+ref_button = Button(ref_loc, 'Refine Solution', color='C4', hovercolor='C3')
