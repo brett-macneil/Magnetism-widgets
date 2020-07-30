@@ -10,6 +10,7 @@ Last updated Wed Jul 29 2020
 # Imports
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider
 from scipy.constants import physical_constants as cst
 from scipy.optimize import fsolve
 
@@ -22,6 +23,7 @@ from scipy.optimize import fsolve
 
 # Set up figure
 fig, ax = plt.subplots(1, 1)
+plt.subplots_adjust(bottom=0.35)
 ax.set_xlabel('Temperature (K)')
 ax.set_ylabel('Magnetization (kA/m)')
 
@@ -89,3 +91,35 @@ def curie_temp(lam, mu):
     Tc = lam*mu0*N*Jeff*(Jeff+1)*(g*muB)**2
     Tc /= 3*kB
     return Tc
+
+
+# Sliders
+lam_1_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
+lam_1_init = 750.
+lam_1_max = 1000.
+lam_1_min = 500.
+lam_1_sl = Slider(ax=lam_1_loc, label=r'$\lambda_1$', valmin=lam_1_min, 
+                  valmax=lam_1_max, valinit=lam_1_init)
+
+lam_2_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
+lam_2_init = 10.
+lam_2_max = 20.
+lam_2_min = 0.
+lam_2_sl = Slider(ax=lam_2_loc, label=r'$\lambda_2$', valmin=lam_2_min, 
+                  valmax=lam_2_max, valinit=lam_2_init)
+
+mu_1_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
+# Moments in units of muB
+mu_1_init = 2.4
+mu_1_max = 5.
+mu_1_min = -5.
+mu_1_sl = Slider(ax=mu_1_loc, label=r'$\mu_1$ $(\mu_B)$', valmin=mu_1_min, 
+                  valmax=mu_1_max, valinit=mu_1_init)
+
+mu_2_loc = plt.axes([0.125, 0.05, 0.775, 0.03])
+# Moments in units of muB
+mu_2_init = -0.4
+mu_2_max = 5.
+mu_2_min = -5.
+mu_2_sl = Slider(ax=mu_2_loc, label=r'$\mu_2$ $(\mu_B)$', valmin=mu_2_min, 
+                  valmax=mu_2_max, valinit=mu_2_init)
