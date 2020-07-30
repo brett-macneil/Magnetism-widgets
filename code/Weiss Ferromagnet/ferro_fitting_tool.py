@@ -142,7 +142,7 @@ M2_plot, = ax.plot(T, M2, linestyle='dotted', color='C7')
 Mtot_plot, = ax.plot(T, Mtot, color='C3')
 
 
-# Slider updates
+# Slider updates and button functionality
 def update(val):
     lam_1_new = lam_1_sl.val
     lam_2_new = lam_2_sl.val
@@ -163,8 +163,19 @@ def update(val):
     fig.canvas.draw_idle()
     
     return None
+
+
+def reset(event):
+    lam_1_sl.reset()
+    lam_2_sl.reset()
+    mu_1_sl.reset()
+    mu_2_sl.reset()
+    return None
+
     
 lam_1_sl.on_changed(update)
 lam_2_sl.on_changed(update)
 mu_1_sl.on_changed(update)
 mu_2_sl.on_changed(update)
+
+rst_button.on_clicked(reset)
