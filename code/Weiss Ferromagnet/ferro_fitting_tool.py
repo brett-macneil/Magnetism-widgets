@@ -140,3 +140,31 @@ data_plot, = ax.plot(T, M, marker='.', linestyle='', color='C0')
 M1_plot, = ax.plot(T, M1, linestyle='dotted', color='C7')
 M2_plot, = ax.plot(T, M2, linestyle='dotted', color='C7')
 Mtot_plot, = ax.plot(T, Mtot, color='C3')
+
+
+# Slider updates
+def update(val):
+    lam_1_new = lam_1_sl.val
+    lam_2_new = lam_2_sl.val
+    mu_1_new = mu_1_sl.val
+    mu_1_new *= muB
+    mu_2_new = mu_2_sl.val
+    mu_2_new *= muB
+    
+    M1_new = get_mag(T, lam_1_new, mu_1_new)
+    M1_plot.set_ydata(M1_new)
+    
+    M2_new = -get_mag(T, lam_2_new, mu_2_new)
+    M2_plot.set_ydata(M2_new)
+    
+    Mtot_new = M1_new + M2_new
+    Mtot_plot.set_ydata(Mtot_new)
+    
+    fig.canvas.draw_idle()
+    
+    return None
+    
+lam_1_sl.on_changed(update)
+lam_2_sl.on_changed(update)
+mu_1_sl.on_changed(update)
+mu_2_sl.on_changed(update)
