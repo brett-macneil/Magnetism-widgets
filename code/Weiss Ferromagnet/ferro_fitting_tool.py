@@ -84,6 +84,33 @@ def get_mag(T, lam, mu, kilo=True):
     return Mag
 
 
+def get_tot_mag(T, lam, mu, N1=N, N2=N, kilo=True):
+    lam_1, lam_2 = lam
+    mu_1, mu_2 = mu
+    Jeff_1 = mu_1/(g*muB)
+    Jeff_2 = mu_2/(g*muB)
+    numpoints = len(T)
+    
+    Mag_1 = np.empty(numpoints)
+    Mag_2 = np.empty(numpoints)
+    guess_1 = N1*mu_1
+    guess_2 = N2*mu_2
+    
+    for i in range(numpoints):
+        Mag_1[i] = fsolve(mag_eq, x0=guess_1, 
+                          args=(lam_1, mu_1, T[i], Jeff_1, N1))
+        guess_1 = Mag_1[i]
+        Mag_2[i] = fsolve(mag_eq, x0=guess_2, 
+                          args=(lam_2, mu_2, T[i], Jeff_2, N2))
+        guess_2 = Mag_2[i]
+        
+    if kilo:
+        Mag_1 /= 1e3
+        Mag_2 /= 1e3
+    
+    return Mag_1 - Mag_2
+
+
 def curie_temp(lam, mu):
     # 1st order expansion of Brillouin 
     # function to estimate Curie temperature.
