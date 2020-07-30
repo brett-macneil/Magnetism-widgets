@@ -199,6 +199,31 @@ def reset(event):
     mu_2_sl.reset()
     return None
 
+
+def refine(event):
+    guess = [lam_1_sl.val, lam_2_sl.val, mu_1_sl.val*muB, mu_2_sl.val*muB]
+    params_ref = curve_fit(get_tot_mag, xdata=T, ydata=M, p0=guess)[0]
+    
+    M1_ref = get_mag(T, params_ref[0], params_ref[2])
+    M1_plot.set_ydata(M1_ref)
+    
+    M2_ref = -get_mag(T, params_ref[1], params_ref[3])
+    M2_plot.set_ydata(M1_ref)
+    
+    Mtot_ref = M1_ref + M2_ref
+    Mtot_plot.set_ydata(Mtot_ref)
+    
+    lam_1_sl.set_val(params_ref[0])
+    lam_2_sl.set_val(params_ref[1])
+    mu_1_sl.set_val(params_ref[2]/muB)
+    mu_2_sl.set_val(params_ref[3]/muB)
+
+    
+    print('\n','Original parameters','\n',guess,'\n')
+    print('\n','Refined parameters','\n',params_ref,'\n')
+    
+    return None  
+
     
 lam_1_sl.on_changed(update)
 lam_2_sl.on_changed(update)
