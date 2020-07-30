@@ -97,30 +97,30 @@ def curie_temp(lam, mu):
 lam_1_loc = plt.axes([0.125, 0.20, 0.775, 0.03])
 lam_1_init = 750.
 lam_1_max = 1000.
-lam_1_min = 500.
+lam_1_min = 0.
 lam_1_sl = Slider(ax=lam_1_loc, label=r'$\lambda_1$', valmin=lam_1_min, 
                   valmax=lam_1_max, valinit=lam_1_init)
 
 lam_2_loc = plt.axes([0.125, 0.15, 0.775, 0.03])
-lam_2_init = 10.
-lam_2_max = 20.
+lam_2_init = 750.
+lam_2_max = 1000.
 lam_2_min = 0.
 lam_2_sl = Slider(ax=lam_2_loc, label=r'$\lambda_2$', valmin=lam_2_min, 
                   valmax=lam_2_max, valinit=lam_2_init)
 
 mu_1_loc = plt.axes([0.125, 0.10, 0.775, 0.03])
 # Moments in units of muB
-mu_1_init = 2.4
+mu_1_init = 2.5
 mu_1_max = 5.
-mu_1_min = -5.
+mu_1_min = 0.
 mu_1_sl = Slider(ax=mu_1_loc, label=r'$\mu_1$ $(\mu_B)$', valmin=mu_1_min, 
                   valmax=mu_1_max, valinit=mu_1_init)
 
 mu_2_loc = plt.axes([0.125, 0.05, 0.775, 0.03])
 # Moments in units of muB
-mu_2_init = -0.4
+mu_2_init = 2.5
 mu_2_max = 5.
-mu_2_min = -5.
+mu_2_min = 0.
 mu_2_sl = Slider(ax=mu_2_loc, label=r'$\mu_2$ $(\mu_B)$', valmin=mu_2_min, 
                   valmax=mu_2_max, valinit=mu_2_init)
 
