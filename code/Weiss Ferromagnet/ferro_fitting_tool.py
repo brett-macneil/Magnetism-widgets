@@ -84,7 +84,7 @@ def get_mag(T, lam, mu, kilo=True):
     return Mag
 
 
-def get_tot_mag(T, lam_1, lam_2 mu_1, mu_2, N1=N, N2=N, kilo=True):
+def get_tot_mag(T, lam_1, lam_2, mu_1, mu_2, N1=N, N2=N, kilo=True):
     Jeff_1 = mu_1/(g*muB)
     Jeff_2 = mu_2/(g*muB)
     numpoints = len(T)
