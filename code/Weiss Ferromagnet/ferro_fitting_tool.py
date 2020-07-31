@@ -206,7 +206,7 @@ def refine(event):
     M1_plot.set_ydata(M1_ref)
     
     M2_ref = -get_mag(T, params_ref[1], params_ref[3])
-    M2_plot.set_ydata(M1_ref)
+    M2_plot.set_ydata(M2_ref)
     
     Mtot_ref = M1_ref + M2_ref
     Mtot_plot.set_ydata(Mtot_ref)
