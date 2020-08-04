@@ -106,7 +106,7 @@ def mag_eq_a(Ma, Mb, lam_aa, lam_ab, T, H):
 
 
 def mag_eq_b(Ma, Mb, lam_bb, lam_ba, T, H):
-    arg = mu0 * mua_max * (H - lam_ba * Ma - lam_bb * Mb) / (kB*T)
+    arg = mu0 * mub_max * (H - lam_ba * Ma - lam_bb * Mb) / (kB*T)
     return Mb_max * brillouin(arg, Jb)
 
 
