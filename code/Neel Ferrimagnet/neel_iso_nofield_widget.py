@@ -101,7 +101,7 @@ def get_intersect(z1, z2, x, y):
     return (x, y)
 
 
-    def mag_eq_a(Mb, lam_ab, T):
+def mag_eq_a(Mb, lam_ab, T):
     arg = -mu0 * mua_max * lam_ab * Mb / (kB*T)
     return Ma_max * brillouin(arg, Ja)
 
